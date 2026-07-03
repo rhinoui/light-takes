@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Light Takes 2.0 — User Manual</title>
+<style>
+:root{--bg:#1d1d1d;--panel:#262626;--ink:#d8d8d8;--dim:#9a9a9a;--acc:#e87d2c;--acc2:#5a8fd6;--line:#3a3a3a;--code:#2e2e2e}
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.65 system-ui,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink)}
+a{color:var(--acc2);text-decoration:none}a:hover{text-decoration:underline}
+nav{position:fixed;top:0;left:0;bottom:0;width:250px;overflow-y:auto;background:var(--panel);border-right:1px solid var(--line);padding:18px 14px}
+nav h1{font-size:17px;margin:0 0 2px;color:#fff}
+nav .ver{color:var(--dim);font-size:12px;margin-bottom:14px}
+nav a{display:block;padding:3px 8px;border-radius:4px;color:var(--ink);font-size:13.5px}
+nav a:hover{background:#333;text-decoration:none}
+nav .h2{margin-top:10px;font-weight:600;color:var(--acc)}
+nav .h3{padding-left:20px;color:var(--dim)}
+main{margin-left:250px;max-width:860px;padding:30px 42px 90px}
+h1,h2,h3{color:#fff;line-height:1.3}
+h2{margin-top:46px;padding-top:14px;border-top:1px solid var(--line);font-size:24px}
+h3{margin-top:28px;font-size:18px;color:var(--acc)}
+code,kbd{background:var(--code);border:1px solid var(--line);border-radius:4px;padding:1px 6px;font-size:13px}
+pre{background:var(--code);border:1px solid var(--line);border-radius:6px;padding:10px 14px;font-size:13px;line-height:1.5;overflow-x:auto}
+kbd{font-family:system-ui;border-bottom-width:2px}
+table{border-collapse:collapse;width:100%;margin:14px 0;font-size:14px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--panel);color:#fff}
+.tip,.warn{border-left:4px solid var(--acc2);background:var(--panel);padding:10px 14px;margin:14px 0;border-radius:0 6px 6px 0}
+.warn{border-color:#d65a5a}
+.shot{border:2px dashed var(--line);border-radius:8px;background:var(--panel);color:var(--dim);padding:26px 16px;text-align:center;margin:16px 0;font-size:13px}
+.shot-img{display:block;max-width:100%;border-radius:8px;margin:16px 0;border:1px solid var(--line)}
+.btn{display:inline-block;background:#3a3a3a;border:1px solid #4a4a4a;border-radius:4px;padding:0 8px;font-size:13px}
+ul{padding-left:22px}
+.muted{color:var(--dim)}
+@media(max-width:900px){nav{display:none}main{margin:0;padding:20px}}
+</style>
+</head>
+<body>
+<nav>
+<h1>Light Takes</h1><div class="ver">User Manual · v2.0</div>
+<a href="#concepts" class="h2">1. Core Concepts</a>
+<a href="#install" class="h2">2. Install &amp; Upgrade</a>
+<a href="#quickstart" class="h2">3. Quick Start</a>
+<a href="#labels" class="h2">4. Labels</a>
+<a href="#takes" class="h2">5. Takes</a>
+<a href="#takes-header" class="h3">Header toolbar</a>
+<a href="#takes-switches" class="h3">Switches S1/S2</a>
+<a href="#takes-camera" class="h3">Camera binding</a>
+<a href="#takes-lights" class="h3">Lights list</a>
+<a href="#gs" class="h3">Global / Solo</a>
+<a href="#subject" class="h3">Subject collection</a>
+<a href="#takes-params" class="h3">Per-take parameters</a>
+<a href="#refbreak" class="h3">Reference changes (Fix)</a>
+<a href="#sync" class="h2">6. Syncing Between Takes</a>
+<a href="#align-ref" class="h3">Align to Take Reference</a>
+<a href="#render" class="h2">7. Batch Render</a>
+<a href="#sheet" class="h2">8. Contact Sheet</a>
+<a href="#visibility" class="h2">9. Visibility Tools</a>
+<a href="#editsource" class="h2">10. Edit Source</a>
+<a href="#es-inst" class="h3">Collection instances</a>
+<a href="#es-gn" class="h3">Geometry Nodes</a>
+<a href="#fastlight" class="h2">11. Fast Light Tools</a>
+<a href="#fl-quick" class="h3">Quick Light</a>
+<a href="#fl-reflect" class="h3">Reflection Place</a>
+<a href="#fl-link" class="h3">Light Linking</a>
+<a href="#nodes" class="h2">12. Node System</a>
+<a href="#node-recipes" class="h3">Recipes</a>
+<a href="#presets" class="h2">13. Light Presets</a>
+<a href="#extras" class="h2">14. Extras</a>
+<a href="#ex-dof" class="h3">Adjust F-Stop (DOF)</a>
+<a href="#ex-camera" class="h3">Adjust Camera</a>
+<a href="#ex-resize" class="h3">Interactive Resize</a>
+<a href="#ex-pip" class="h3">Floating Viewport</a>
+<a href="#ex-frametext" class="h3">Frame Text</a>
+<a href="#ex-ai" class="h3">Depth Preview &amp; AI Pack</a>
+<a href="#prefs" class="h2">15. Preferences &amp; Keymap</a>
+<a href="#trouble" class="h2">16. Troubleshooting</a>
+<a href="#faq" class="h2">17. FAQ</a>
+</nav>
+<main>
+
+<h1>Light Takes — User Manual</h1>
+<p class="muted">Version 2.0 · Blender 4.2 LTS+ · All panels live in <b>3D View → Sidebar (N) → Light Takes</b></p>
+
+<h2 id="concepts">1. Core Concepts</h2>
+<table>
+<tr><th>Term</th><th>Meaning</th></tr>
+<tr><td><b>Take</b></td><td>A complete lighting setup: light positions &amp; parameters, visibility, reflector materials, world state, render resolution — and optionally its own camera. Click a take button to apply it instantly.</td></tr>
+<tr><td><b>Label</b></td><td>What makes a light/reflector "managed" by Light Takes. Labeled objects show viewport name tags and are tracked per take.</td></tr>
+<tr><td><b>Global (G)</b></td><td>A labeled light that exists in <i>every</i> take, with independent parameters per take.</td></tr>
+<tr><td><b>Solo (S)</b></td><td>A labeled light that belongs to specific takes only; it is hidden and listed as <i>(Inactive)</i> elsewhere.</td></tr>
+<tr><td><b>Subject</b></td><td>An optional collection whose objects' state (visibility, transform, materials) is also snapshotted per take.</td></tr>
+</table>
+
+<h2 id="install">2. Install &amp; Upgrade</h2>
+<ul>
+<li><b>Install:</b> Edit → Preferences → Get Extensions → ⌄ → <i>Install from Disk…</i> → choose <code>light_takes-x.x.x.zip</code>. (Legacy Add-ons tab works too.)</li>
+<li><b>Upgrade from 1.x (Light Labels):</b> install, restart Blender, open your file. Migration is automatic — the console prints <code>migrated N legacy node(s)</code> and <code>state data migrated to schema v2</code>. Save the file once and migration never runs again.</li>
+</ul>
+<div class="warn"><b>Back up first.</b> Migration is one-way; keep a copy of important 1.x files until you have verified everything.</div>
+
+<h2 id="quickstart">3. Quick Start</h2>
+<ol>
+<li>Open the <b>Labels</b> panel → select your lights → <span class="btn">Label All</span></li>
+<li>In <b>Takes</b>, press <span class="btn">＋</span> to create Take 1. Light your scene.</li>
+<li>Press <span class="btn">＋</span> again — the current setup is copied. Relight: that's Take 2.</li>
+<li>Select a camera, click the <span class="btn">📷</span> icon to bind it to the current take <i>(optional)</i>.</li>
+<li>Click take buttons to compare. <span class="btn">Render All</span> renders everything + a contact sheet.</li>
+</ol>
+<img class="shot-img" src="docs/shot_01_takes_panel.png" alt="Takes panel with 4 take buttons, lights list expanded">
+
+<h2 id="labels">4. Labels Panel</h2>
+<table>
+<tr><th>Button</th><th>Action</th></tr>
+<tr><td>Add Label / Remove Label</td><td>Label or unlabel the active light/reflector. Reflectors get a role (Silver Bounce, Diffusion, Backdrop…) which auto-assigns a preset material and display mode.</td></tr>
+<tr><td>Label All</td><td>Labels every unlabeled light with its object name.</td></tr>
+<tr><td>Organize</td><td>Moves labeled lights, reflectors and cameras into a tidy collection hierarchy (<code># Lights</code>, <code># Reflectors</code>, <code># Cameras</code>).</td></tr>
+<tr><td>Sync</td><td>Renames objects to match their label names.</td></tr>
+<tr><td>Label / Info / Combined</td><td>Cycles label display: name only, live parameters (power · color · size/angle), or both.</td></tr>
+<tr><td>👁</td><td>Master toggle for all viewport labels.</td></tr>
+</table>
+
+<h2 id="takes">5. Takes Panel</h2>
+<h3 id="takes-header">Header toolbar</h3>
+<table>
+<tr><th>Icon</th><th>Action</th></tr>
+<tr><td>◀ ▶</td><td>Move the active take left/right. Take data follows automatically.</td></tr>
+<tr><td>− / ＋</td><td>Remove (with confirmation — all states in that take are lost) / Add. Adding copies the current take's setup.</td></tr>
+<tr><td>🔄</td><td><b>Sync everything</b> from the selected object to all other takes (see §6).</td></tr>
+<tr><td>⚙</td><td>Opens the custom-sync popover.</td></tr>
+<tr><td>🎬 (Render)</td><td>Batch render dialog (§7).</td></tr>
+<tr><td>🖼 (Image)</td><td>Re-roll the contact sheet from the last batch (§8). Disabled until you have rendered once.</td></tr>
+</table>
+<p>Click any numbered button to switch takes. Editing anything marks the take dirty; it is saved automatically when you switch away or save the file.</p>
+
+<h3 id="takes-switches">Per-take switches</h3>
+<table>
+<tr><th>Control</th><th>Meaning</th></tr>
+<tr><td>S1 / S2</td><td>Two booleans stored per take, exposed as <b>Switch 1/2</b> outputs of the Info node (§12). Use them to toggle material/GN effects per take.</td></tr>
+<tr><td>Switch Index</td><td>An integer exposed as the <b>Switch Index</b> output — e.g. drive an Index Switch node to pick a backdrop color per take.</td></tr>
+<tr><td>🔒</td><td>Locked = one global index shared by all takes; unlocked = each take stores its own.</td></tr>
+</table>
+
+<h3 id="takes-camera">Camera binding</h3>
+<p>Each take can own a camera. Select a camera and click <span class="btn">📷</span>: the take now stores that camera's <b>position, rotation, lens, shift and DOF</b> (including focus distance and f-stop). Switching takes moves/switches the camera accordingly. Click again to unbind; with a <i>different</i> camera selected, the icon becomes 🔁 and clicking rebinds. The camera name button focuses the view on it. The DOF icon toggles depth of field and places the focus empty.</p>
+<img class="shot-img" src="docs/shot_02_camera_row.png" alt="Camera row: bound camera name + DOF + bind icons">
+
+<h3 id="takes-lights">Lights / Reflectors lists</h3>
+<p>Each row, left to right:</p>
+<ul>
+<li><b>Letter button</b> (A, B, C… / 1, 2, 3…) — matches the viewport tag; click to hide/show that label.</li>
+<li><b>Name field</b> + role dropdown. With <b>Expand</b> (header ▾) on, rows show live energy/color/size sliders instead.</li>
+<li><b>👁</b> hide/show the object — the all-in-one toggle that flips Eye + Monitor + render together, same as <kbd>V</kbd> (see §9).</li>
+<li><b>⭘ (Solo icon)</b> — lights only: isolate this light (all others off); the row turns into quick energy/size sliders while isolated. <kbd>Shift</kbd>+Click also disables the world environment for the duration (restored on exit). <i>Note:</i> re-enabling the environment re-samples the world, which can lag with large HDRIs — so it is opt-in per click, not automatic.</li>
+<li><b>G / S</b> — only visible when the <b>G/S</b> header toggle is on; see below.</li>
+<li><b>Select arrow</b> — selects and frames the object; for lights it also opens its node tree in an open editor.</li>
+</ul>
+<p>Header row extras: ▶ <b>Cycle Show</b> (animated light-by-light walkthrough; ONE = one at a time, ADD = cumulative; Move/Hold times in Global Settings), 🌐 world on/off, node-editor jump, eye-all toggle, ▲▼ reorder, and the lists for Reflectors &amp; Props below.</p>
+
+<h3 id="gs">Global / Solo (G/S)</h3>
+<ol>
+<li>Turn on the <b>G/S</b> header toggle to show the mode column.</li>
+<li>Click <span class="btn">G</span> on a light → it becomes <b>Solo</b>, active only in the current take; other takes show it as <i>(Inactive)</i>.</li>
+<li>On a Solo light, <span class="btn">S</span> toggles whether it is active in the <i>current</i> take.</li>
+<li><kbd>Shift</kbd>+click restores the light to Global everywhere.</li>
+</ol>
+<div class="tip">With the G/S column hidden, inactive Solo objects disappear from the list entirely — your list always shows exactly what the current take uses.</div>
+
+<h3 id="subject">Subject collection</h3>
+<p>Appears when you have 2+ takes. Pick a collection, click <span class="btn">＋</span> to mark it as Subject, then tick the checkbox to enable snapshots. From then on the objects inside have their visibility/transform/materials stored per take. <span class="muted">(Two deliberate steps: marking and enabling are separate.)</span> Disabling warns you that per-take positions collapse to the current take.</p>
+<p><span class="muted">Shortcut:</span> right-click a collection in the <b>Outliner</b> → <b>Set as Light Takes Subject</b> (mark only) or <b>Set as Subject &amp; Enable Snapshots</b> (the one-click version). If a collection is already the Subject but not yet enabled, the menu instead offers <b>Enable Subject Snapshots</b>.</p>
+
+<h3 id="takes-params">Per-take parameters</h3>
+<p>Beyond transform/visibility/materials, you can make almost <i>any</i> property store an independent value per take. <b>Right-click the property → "Assign to Light Take"</b> — a shape-key value, a modifier setting, an object custom property, and so on. From then on each take keeps its own value and restores it on switch; editing under one take never bleeds into another. No drivers, no keyframes — the value lives in its normal place, the take system just snapshots and restores it.</p>
+<table>
+<tr><th>Point</th><th>Detail</th></tr>
+<tr><td>What can be assigned</td><td>Numeric, color and boolean properties on a <b>labeled light/reflector or a Subject-collection object</b>. The value must live on the object (or its data/shape-keys/modifiers).</td></tr>
+<tr><td>Each take is independent</td><td>When you assign, every take is seeded with the current value as its own starting point — so unused takes don't silently inherit a neighbour's value.</td></tr>
+<tr><td>Per-Take custom properties</td><td>In the manager, ticking <b>Per-Take</b> when adding a property prefixes it with <code>P_</code> — the same mechanism, handy for an integer that drives an <b>Index Switch</b> (§12).</td></tr>
+</table>
+<p><b>Managing them:</b> Extras → <span class="btn">Per-Take Parameters</span> opens a popup listing every assigned parameter with an inline value field and a per-row ✕ to unassign. Properties that no longer resolve (the shape key/modifier was renamed or deleted) show as <i>(missing)</i>; clear them per-row or with <b>Purge</b> (§14). Cleanup is always manual on purpose — a rename looks identical to a deletion, so the add-on never removes a binding automatically.</p>
+<div class="warn"><b>Object vs material.</b> "Assign to Light Take" only works for values that live on an <i>object</i>. A value on a shared <i>material</i> is excluded by design: changing it would affect every object using that material. To vary a shared material per object/per take, drive it from an object property through an <b>Attribute (Object)</b> node — see §12.</div>
+
+<h3 id="refbreak">Reference changes — "Fix Other Takes"</h3>
+<p>Each take stores an object's <b>local</b> position/rotation/scale. A few Blender operations don't <i>move</i> an object — they redefine the <b>reference frame</b> that position is measured from (its <b>origin</b>, or its <b>parent</b>). Do that in one take and the <i>other</i> takes still hold the old numbers, so the object jumps to the wrong place when you switch to them. Light Takes detects this and offers a one-click fix that corrects every other take.</p>
+
+<table>
+<tr><th>Breaks the other takes</th><th>Safe — nothing to fix</th></tr>
+<tr>
+<td>
+<ul>
+<li><b>Set Origin</b> (Object → Set Origin, <i>any</i> mode)</li>
+<li><b>Apply Location</b> — <kbd>Ctrl</kbd>+<kbd>A</kbd> → Location</li>
+<li><b>Parent Without Inverse</b>, <b>Clear Parent Inverse</b></li>
+<li>Re-parent / Clear Parent that actually <i>moves</i> the object</li>
+</ul>
+</td>
+<td>
+<ul>
+<li>Normal <kbd>Ctrl</kbd>+<kbd>P</kbd> parenting (Object / Keep Transform)</li>
+<li>Normal <kbd>Alt</kbd>+<kbd>P</kbd> → Clear &amp; Keep Transform</li>
+<li>Just <b>moving</b> the object (<kbd>G</kbd>) — a real position, stored per take on purpose</li>
+</ul>
+</td>
+</tr>
+</table>
+<p class="muted">Why the right column is safe: those keep the object's <i>world</i> position (e.g. Keep Transform sets a parent-inverse that cancels the parent), so every take's stored numbers still resolve to the right spot.</p>
+
+<p><b>How you're reminded — and how to fix.</b> There is <i>no</i> constant panel warning (just like Blender never nags you to press <kbd>Ctrl</kbd>+<kbd>A</kbd>). A pending break surfaces only in two places, only when one actually exists:</p>
+<ul>
+<li><b>Switching takes</b> pops a small dialog — <i>"Reference changed… ☑ Fix other takes"</i> with a <span class="btn">Switch</span> button. Leave the box ticked and press Switch to <b>fix every other take and switch</b>; untick it to switch without fixing; press <kbd>Esc</kbd> to stay put.</li>
+<li><b>"Fix Other Takes"</b> sits in the <kbd>Ctrl</kbd>+<kbd>A</kbd> (Apply) menu — your habitual "apply" spot. It is <b>greyed out until something is actually broken</b> (so you can't misclick it), and clicking it <b>fixes the other takes and stays</b> on the current take.</li>
+</ul>
+
+<p><b>Example.</b> A prop sits in a different spot in Take&nbsp;1 and Take&nbsp;2. In Take&nbsp;1 you run <i>Set Origin → Origin to Geometry</i>. Open <kbd>Ctrl</kbd>+<kbd>A</kbd> and <b>Fix Other Takes</b> lights up — or just click <b>Take&nbsp;2</b>: the dialog appears, press <span class="btn">Switch</span> (Fix ticked). Both takes keep their own position; nothing jumps.</p>
+
+<div class="warn"><b>Don't confuse Fix with Sync.</b> The same <kbd>Ctrl</kbd>+<kbd>A</kbd> menu also has <b>Sync Selected to All Takes</b> (§6) — and it does the <i>opposite</i>: it <b>overwrites</b> every other take with the selected object's current state, so they all become identical (per-take positions are lost). <b>Fix</b> preserves each take's own position; <b>Sync</b> flattens them. Reach for Sync only when you truly want "make this the same everywhere".</div>
+
+<div class="tip"><b>What "Fix" actually does.</b> Origin / Apply changes are compensated so each take keeps its own position. Parent changes <i>mirror</i> Blender: if you used <b>Keep Transform</b>, every take keeps its own world position; a plain Clear (which Blender lets jump) jumps the same way in every take — it is never silently dragged back. So "use Keep Transform to preserve position" stays true; the fix only propagates the same result to the other takes.</div>
+
+<div class="warn"><b>Fix it before you leave the take.</b> A break is detectable only while you're still on the take where you made the change — the switch dialog catches it at that <i>first</i> switch, so when it asks, say yes. Switch away without fixing and the other takes are left as-is, with no further reminder.</div>
+
+<p class="muted">Scope: Subject-collection objects and Reflectors. Not auto-detected: Set Origin on a <i>parent</i> object (children shift passively), and Apply <i>Rotation/Scale</i>.</p>
+
+<h2 id="sync">6. Syncing Between Takes</h2>
+<p><b>Main 🔄 button:</b> copies <i>everything</i> about the selected object(s) to <i>all other</i> takes — the "make this consistent everywhere" hammer.</p>
+<p><b>⚙ Custom sync popover:</b> choose <i>what</i> (Everything ↔ Material / Visibility / Transform / Light Props — mutually exclusive with Everything) and <i>where</i> (All Other Groups / All Except… / Only Selected, with per-take checkboxes), then press <span class="btn">Run Custom Sync</span>.</p>
+
+<h3 id="align-ref">Align to Take Reference <span class="muted">(a temporary position clipboard)</span></h3>
+<p>Sync <i>pushes</i> from the source take to all/chosen takes — targets decided up front. <b>Take Reference</b> is a lightweight <i>pull</i> tool: mark one reference position, then align whatever you're looking at to it — a <b>different object</b>, or the <b>same object in another take</b>. Like "set a reference, then align elements to it".</p>
+<ul>
+<li><b>Mark as Take Reference</b> — right-click an object → its current <b>world position</b> becomes THE reference. There is one shared, temporary slot (nothing is written into the object or the .blend); re-mark to replace it.</li>
+<li><b>Align to Take Reference</b> — select any object(s) → <kbd>Ctrl</kbd>+<kbd>A</kbd> (Apply) → <b>Align to Take Reference</b> matches them to the reference. The redo panel has independent <b>Location / Rotation / Scale</b> toggles (Blender-style) — Location only by default, tick any combination. Only the current take changes. The entry is greyed until a reference has been marked.</li>
+</ul>
+<div class="tip">It's a position clipboard, not a per-object memory — handy for "put this object exactly where that one is", or "same spot across takes". To match <i>everything</i> (rotation/scale/visibility/material) at once instead, use <b>Sync</b>.</div>
+
+<h2 id="render">7. Batch Render</h2>
+<p><span class="btn">Render All Groups</span> renders every take to <code>//&lt;subfolder&gt;/</code> next to your .blend, named <code>{file}_{01..NN}</code>. Options: resolution preset buttons (50/75/100/125%) or custom %, output subfolder, open-folder-after, and the Contact Sheet block (§8). Press <kbd>Esc</kbd> anytime to cancel; original settings are restored. Existing files are overwritten (the dialog warns you).</p>
+<div class="tip">Each take re-applies its complete state (including per-take render resolution) before rendering — what you saw is what you get.</div>
+
+<h2 id="sheet">8. Contact Sheet</h2>
+<p>Generated automatically after a batch render (toggle in the dialog), saved as <code>{file}_contact_sheet.png</code> in the output folder. Colors match your renders exactly.</p>
+<table>
+<tr><th>Layout</th><th>Behaviour</th></tr>
+<tr><td><b>Masonry (Long)</b></td><td>Pinterest-style vertical sheet. No cropping. <i>Columns = 1</i> gives a clean top-to-bottom strip.</td></tr>
+<tr><td><b>Fill (Mosaic)</b></td><td>Covers the canvas completely at any image count. Cells stay close to each image's aspect; cropping is center-weighted.</td></tr>
+<tr><td><b>Hero</b></td><td>Take 1 large on the left, the rest fill the right. Put your lead option first.</td></tr>
+</table>
+<ul>
+<li><b>Sheet Width</b> (total px) and <b>Gutter</b> (gap px) apply to all layouts.</li>
+<li><b>Canvas Ratio</b> (Fill/Hero): 16:9 · 3:2 · 4:3 · 1:1 · 4:5 · 9:16.</li>
+<li><b>Front Bias</b> (Fill/Hero): 0 = equal cells; higher values give earlier takes bigger cells — detail shots shrink proportionally.</li>
+<li><b>Re-roll</b> (🖼 in the Takes header): regenerates a <i>different</i> well-composed layout from the same renders — no re-rendering. You can change any option in its dialog. Output is numbered <code>…_v2, _v3</code>; nothing is overwritten.</li>
+</ul>
+<img class="shot-img" src="docs/shot_03_contact_sheet.png" alt="Contact sheet, Hero layout — lead take large, other takes in a grid">
+
+<h2 id="visibility">9. Visibility Tools</h2>
+<p>Blender has three visibility flags per object: the <b>Eye</b> (<i>Hide in Viewport</i>, <kbd>H</kbd>/<code>hide_set</code>), the <b>Monitor</b> (<i>Disable in Viewports</i>, <code>hide_viewport</code>) and the <b>Camera</b> (<i>Disable in Renders</i>, <code>hide_render</code>). The addon's own controls — <kbd>V</kbd>, the list <b>👁</b>, the Quick&nbsp;Light <i>Hide</i> button — are an <b>all-in-one toggle that drives all three together</b>, so &ldquo;show&rdquo; really means visible in the viewport, the Rendered preview <i>and</i> the final render. The raw native icons stay independent (see the escape-hatch tip below).</p>
+<table>
+<tr><th>Key</th><th>Where</th><th>Action</th></tr>
+<tr><td><kbd>V</kbd></td><td>3D View / Outliner</td><td>All-in-one toggle for the selection: flips Eye + Monitor + render together. Direction is &ldquo;hidden on <i>any</i> axis ⇒ next press shows&rdquo;, so it reveals an object that only the native Eye was hiding — which a Monitor-only toggle could not.</td></tr>
+<tr><td><kbd>Alt</kbd>+<kbd>V</kbd></td><td>3D View / Outliner</td><td>Show <i>absolutely everything</i> scene-wide — clears Eye, Monitor and render on every object (Alt+H plus render, in one key).</td></tr>
+<tr><td><kbd>H</kbd> (native)</td><td>3D View</td><td>Blender's own Eye hide — touches only the Eye axis (viewport + Rendered preview, not F12). It <i>is</i> captured per take like any other axis — see the table.</td></tr>
+</table>
+
+<p>What each control touches:</p>
+<table>
+<tr><th>Control</th><th>3D viewport</th><th>Rendered preview</th><th>F12 final render</th><th>Stored in take</th></tr>
+<tr><td><b>V</b> / list <b>👁</b> / Quick&nbsp;Light <i>Hide</i></td><td>hidden</td><td>hidden</td><td><b>hidden</b></td><td>✅ yes</td></tr>
+<tr><td><b>H</b> &nbsp;<span class="muted">(native Eye, on its own)</span></td><td>hidden</td><td>hidden</td><td><b>renders</b></td><td>✅ yes (Eye axis)</td></tr>
+<tr><td>nothing hidden</td><td>shown</td><td>renders</td><td>renders</td><td>—</td></tr>
+</table>
+<p><b>Each take snapshots all three axes independently</b> and restores them on switch — so Take&nbsp;A can have an object hidden (by any axis) while Take&nbsp;B shows it, and flipping between them just works; you never re-hide by hand. The <kbd>H</kbd> row is worth knowing: a lone Eye hides the object from the viewport and the Rendered preview but <i>not</i> from F12 — so it can &ldquo;vanish from preview yet still render.&rdquo; If that ever surprises you, select it and press <kbd>V</kbd>: its direction is &ldquo;hidden on any axis ⇒ show,&rdquo; so it clears a stray Eye even when the Monitor flag was already on — no scattershot <kbd>Alt</kbd>+<kbd>H</kbd>.</p>
+<div class="tip"><b>The three flags pair up only through the addon's own controls.</b> <kbd>V</kbd>, the list <b>👁</b> and Quick&nbsp;Light <i>Hide</i> move Eye + Monitor + render as one. The raw <b>Eye</b>, <b>Monitor</b> and <b>Camera</b> icons you click directly (Outliner / Properties) stay fully independent — clicking the Monitor icon does <i>not</i> drag the Camera with it. That is the escape hatch for &ldquo;hidden in the viewport for speed, but still in the render,&rdquo; and because each axis is snapshotted independently, that deliberate desync is preserved per take.</div>
+<div class="tip">The <b>Monitor</b> flag is the reliable backbone: unlike the Eye, <code>hide_viewport</code> works on objects that aren't in the active view layer (e.g. inside a Subject or Edit-Source collection), where <code>hide_set()</code> silently fails. Takes restore all three axes, but the Eye is best-effort and the Monitor flag is what always &ldquo;sticks.&rdquo;</div>
+<div class="warn">Opening a file made before this version? Some objects may carry a saved native-Eye hide (Blender stores the Eye per object in the <code>.blend</code>): hidden in the viewport and Rendered preview while their Monitor/Camera icons say &ldquo;shown,&rdquo; reappearing in F12. Switching takes now heals these automatically (old snapshots had no Eye value, so the Eye is realigned to the Monitor state on apply). To clear one immediately, select it and press <kbd>V</kbd> (or <kbd>Alt</kbd>+<kbd>V</kbd> scene-wide), then save.</div>
+
+<h2 id="editsource">10. Edit Source — fix things where they live</h2>
+<h3 id="es-inst">Collection instances</h3>
+<p><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+Click a collection instance (3D View object mode or Outliner): the source collection is enabled, the instance hidden, and you edit the real objects. The orange banner shows where you are; nesting works (instance inside instance) with a breadcrumb. Click the gesture again (or the ✓) to step back out — everything is restored. <i>Auto Isolate</i> additionally enters Local View.</p>
+<h3 id="es-gn">Geometry Nodes sources</h3>
+<p><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+Click an object whose Geometry Nodes reference other objects/collections (Object Info, Collection Info, exposed inputs — nested groups included):</p>
+<ul>
+<li><b>1 reference:</b> enters it directly.</li>
+<li><b>2–10:</b> a picker lists each source with the node it comes from, plus <b>Edit All Sources</b>.</li>
+<li><b>&gt;10:</b> a searchable popup.</li>
+<li><b>Repeat use:</b> the shortcut jumps straight to the last source you edited on that object; the panel button always shows the full picker. ◀ ▶ in the panel pages through sources without leaving the session.</li>
+</ul>
+<p>Collections are revealed <b>shallow</b>: only their direct members appear. If a member is itself a collection instance, <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+Click it to drill deeper (the two systems chain). Exiting restores <i>every</i> visibility flag — including excluded parent collections — exactly as they were.</p>
+<div class="warn">During a GN edit session, avoid manually changing the visibility of unrelated collections — the exit restore returns the whole view layer to its entry state.</div>
+<img class="shot-img" src="docs/shot_04_gn_picker.png" alt="Editing a GN-referenced source: HUD shows the source name and Ctrl+Shift+Click to finish">
+
+<h2 id="fastlight">11. Fast Light Tools</h2>
+<p>Three tools for placing and shaping lights quickly. All act on the <b>active light</b> (or the one you pick); none are tied to takes, so they work anytime.</p>
+
+<h3 id="fl-quick">Quick Light <span class="muted">(Shift+Q)</span></h3>
+<p>A compact panel opens at your cursor. Pick a light with the <b>A / B / C</b> buttons (each shows its colour; a green dot means it has light linking; dimmed = hidden); the top shows the light's name and power/size. Then act — the panel closes when you launch a viewport tool, and stays open for instant toggles so you can see the result:</p>
+<table>
+<tr><th>Group</th><th>Buttons</th></tr>
+<tr><td>Placement</td><td><b>Place</b> / <b>Adjust</b> (Reflection Place, §11.2) · <b>New</b> (create a light in the same style and place it)</td></tr>
+<tr><td>Light Linking</td><td><b>Pick</b> / <b>Subject</b> / <b>All</b> (§11.3)</td></tr>
+<tr><td>Toggles</td><td><b>Solo</b> (same 3-state logic as the list; Shift-click = back to Global) · <b>Isolate</b> (Shift-click = also disable environment) · <b>Hide</b> — each shows its current state</td></tr>
+</table>
+<p>Drag the panel's empty area to move it; click outside, press <kbd>Esc</kbd>, or hit <kbd>Shift</kbd>+<kbd>Q</kbd> again to close. Buttons that need a visible light (Place/Adjust/Pick) are greyed out when the light is hidden.</p>
+<img class="shot-img" src="docs/shot_06_quick_light.png" alt="Quick Light cursor panel">
+
+<h3 id="fl-reflect">Reflection Place <span class="muted">(Ctrl+Alt+R)</span></h3>
+<p>Hover a surface; the active light is positioned so its specular highlight lands under the cursor (the light aims along the view ray reflected about the surface normal). Motion is smoothed so it feels fluid, not jumpy.</p>
+<table>
+<tr><th>Input</th><th>Action</th></tr>
+<tr><td>Mouse</td><td>Re-aim the highlight to the surface under the cursor</td></tr>
+<tr><td><kbd>Tab</kbd> / <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd></td><td>Choose what the wheel adjusts: Distance / Power / Size / Spread</td></tr>
+<tr><td>Wheel <span class="muted">(Shift = fine)</span></td><td>Adjust the active value</td></tr>
+<tr><td><kbd>Space</kbd></td><td>Lock aim — freeze orientation, dolly distance only</td></tr>
+<tr><td>Click / <kbd>Esc</kbd></td><td>Confirm / cancel</td></tr>
+</table>
+<p>The on-screen banner always shows the current mode and keys. <i>Adjust</i> in Quick Light launches this tool with aim already locked.</p>
+<img class="shot-img" src="docs/shot_07_reflect_place.png" alt="Reflection Place, highlight marker + readout pill">
+
+<h3 id="fl-link">Light Linking <span class="muted">(Cycles / EEVEE Next)</span></h3>
+<p>Make a light affect only the objects you choose. Each light gets its own private receiver collection behind the scenes, so editing one light never touches your real collections. Three actions (from the list, Quick Light, or operators):</p>
+<table>
+<tr><th>Action</th><th>Effect</th></tr>
+<tr><td><b>Pick</b></td><td>Modal viewport picker: click objects to toggle whether the light affects them. Linked objects are boxed in green; hover shows yellow (will link) or orange (will unlink). RMB/Esc finishes.</td></tr>
+<tr><td><b>Only Subject</b></td><td>Light affects exactly the Subject collection's objects.</td></tr>
+<tr><td><b>All</b></td><td>Clear linking — the light affects everything again.</td></tr>
+</table>
+<div class="tip">Light-linking choices are stored <b>per take</b> — a light can illuminate different objects in different lighting setups, and switching takes restores each one.</div>
+<div class="warn">Requires a renderer with light linking (Cycles, or EEVEE Next in 4.2+). On unsupported renderers the choices are saved but have no visible effect.</div>
+
+<h2 id="nodes">12. Node System</h2>
+<p>All nodes live in <b>Add → Light Takes</b> (Shader editor; the Geo logic node in Geometry editors).</p>
+<h3>Light Takes Info</h3>
+<table>
+<tr><th>Output</th><th>Value</th></tr>
+<tr><td>Current Group</td><td>Active take number (1-based)</td></tr>
+<tr><td>Total Groups</td><td>Take count</td></tr>
+<tr><td>Progress</td><td>0→1 across takes (great for gradients)</td></tr>
+<tr><td>Random</td><td>Stable random per take</td></tr>
+<tr><td>Switch 1 / 2</td><td>The per-take S1/S2 buttons (0/1)</td></tr>
+<tr><td>Switch Index</td><td>The per-take/global index (§5)</td></tr>
+</table>
+<h3>Light Label Logic (+ World / Geo variants)</h3>
+<p>Outputs <b>Match = 1</b> when the active take is one of its targets. Set the Targets count, type take numbers into the Target sockets — or select the node and click take buttons in the node editor's sidebar panel. The World variant works inside world shaders; the Geo variant outputs a boolean.</p>
+<h3>Index Switch / Global Palette</h3>
+<p><b>Index Switch</b> routes one of up to 8 inputs (Float/Vector/Color/Shader) by index. The index source decides the scope:</p>
+<ul>
+<li>Feed it the Info node's <b>Switch Index / Current Group</b> → the choice follows the <b>take</b> (same for every object).</li>
+<li>Feed it an <b>Attribute (Object)</b> node reading an object property → the choice follows the <b>object</b>. This is how 100 objects can share one material yet each pick a different variant — and if that property is <code>P_</code> (§5), per take too. (The Per-Take Parameters manager's <span class="btn">Insert Node</span> wires this for you.)</li>
+</ul>
+<p><b>Global Palette</b> manages a set of colors shared across materials, with randomize/algorithm tools in its sidebar panel.</p>
+<div class="tip"><b>Why route through a property instead of assigning the socket directly?</b> A material is usually shared by many objects, so a value stored on the material moves them all together. Keeping the value on the object (read via Attribute) is what gives per-object — and per-take — control without duplicating materials.</div>
+<img class="shot-img" src="docs/shot_05_info_index_switch.png" alt="Info node driving a backdrop color via Index Switch">
+
+<h3 id="node-recipes">Recipes</h3>
+<p>Concrete wirings for the most common request — <i>"this value should follow the take"</i>. The walkthrough uses a world HDRI rotation, but the same patterns apply to any float, color or vector.</p>
+
+<p><b>Rotating the environment per take.</b> Wire the value into a <b>Mapping</b> node's <b>Rotation Z</b> ahead of the Environment Texture. Mapping rotation is in <b>radians</b> (30° ≈ 0.5236) — either type radian values directly or put a Math (Radians) node before the Mapping. Pick the pattern by how many different angles you need:</p>
+<table>
+<tr><th>Angles</th><th>Wiring</th></tr>
+<tr><td><b>2</b></td><td>One <b>Logic (World)</b> + one <b>Mix (Float)</b>. Put the takes that use the second angle into the Targets, wire <b>Match → Factor</b>, first angle into <b>A</b>, second into <b>B</b>.</td></tr>
+<tr><td><b>3–4</b><br><span class="muted">(several takes share an angle)</span></td><td>One <b>Logic (World)</b> node <i>per angle</i>, each listing its takes as Targets. Multiply each <b>Match</b> by its angle (Math ×), then <b>Add</b> the branches together.</td></tr>
+<tr><td><b>One per take</b></td><td>Info node's <b>Current Group → Index Switch</b> (Float), one input per take — see above.</td></tr>
+</table>
+
+<p>Example of the multiply-and-add pattern — takes 1–3 share 30°, takes 4–5 use 90°, take 6 uses 210°:</p>
+<pre>Logic A [Targets: 1 2 3]  Match ── × 30° ──┐
+                                           ├─ Add ─┐
+Logic B [Targets: 4 5]    Match ── × 90° ──┘       ├─ Add ──→ Radians ──→ Mapping Rotation Z
+Logic C [Targets: 6]      Match ── × 210° ─────────┘</pre>
+<p class="muted">Math (Add) takes two inputs, so summing N branches chains N−1 Add nodes — the order doesn't matter.</p>
+<p>Why plain addition works: each take number appears in exactly <b>one</b> Logic node, so at any moment a single Match is 1 and the rest are 0. The multiply acts as a gate — the "off" branches contribute 0 — and the sum is exactly the active take's angle.</p>
+<div class="warn">Keep the Target lists <b>disjoint</b>. If a take number is listed in two Logic nodes, both branches switch on at once and their angles add up (e.g. 30° + 90° = 120°).</div>
+<div class="tip"><b>World shaders: prefer the Logic (World) patterns.</b> The Info node refreshes several outputs on every take switch (Current Group, Progress, Random…), which forces the environment to recalculate on <i>every</i> switch. A Logic (World) node only touches the world when its Match actually flips — with the multiply-and-add setup above, switching between two takes that share an angle costs nothing.</div>
+
+<p><b>The same patterns elsewhere:</b></p>
+<ul>
+<li><b>Enable something only in certain takes</b> — Logic <b>Match → Mix Shader Factor</b> in a material (e.g. an emission plane that lights up only in takes 2 and 5), or multiply Match into any strength/value socket.</li>
+<li><b>Per-take backdrop color</b> — Info <b>Current Group</b> (or a per-take <b>Switch Index</b>, §5) <b>→ Index Switch</b> (Color), as in the screenshot above.</li>
+<li><b>Gradient across takes</b> — Info <b>Progress → Color Ramp</b>: 0 at the first take, 1 at the last, so the whole take sequence sweeps the ramp.</li>
+<li><b>Per-object variants under one material</b> — Attribute (Object) <b>→ Index Switch</b>, see the tip above; make the property <code>P_</code> for per-take control.</li>
+</ul>
+
+<h2 id="presets">13. Light Presets</h2>
+<p>With a light selected, the panel lists presets matching its type. <span class="btn">💾</span> saves the light's complete node tree as a preset; click a preset to apply; 🔧 enters edit mode for rename/delete; 🔄 resets the light's nodes to default. Preset folder is configurable in Preferences.</p>
+
+<h2 id="extras">14. Extras</h2>
+<ul>
+<li><b>Adjust Camera</b> — interactive focal length &amp; dolly distance; see §14.2 below.</li>
+<li><b>Adjust F-Stop</b> — interactive depth-of-field focus &amp; aperture; see §14.1 below.</li>
+<li><b>Interactive Resize</b> — drag the camera frame to change render resolution; see §14.3 below.</li>
+<li><b>Per-Take Parameters</b> — manage object custom properties (batch-add, edit across every object that carries one, mark Per-Take, <span class="btn">Insert Node</span> to wire an Attribute→Index Switch) and every <i>Assigned Parameter</i> from §5 in one popup.</li>
+<li><b>Clear Material Slots</b> — strip all slots from the selection.</li>
+<li><b>Purge</b> — housekeeping for the take data: removes saved entries for deleted objects and assigned parameters that no longer resolve, across all takes. Manual, reported, and undoable; the Subject collection is left untouched when it isn't currently resolvable. <b>Debug Info</b> reports how many of each are waiting.</li>
+</ul>
+
+<h3 id="ex-dof">14.1 Adjust F-Stop — DOF Focus <span class="muted">(Ctrl+Alt+F)</span></h3>
+<p>Sets the active camera's depth of field by hand. On launch it enables DOF if it was off, binds a <code>DOF_Focus</code> empty as the camera's focus object, and drops you straight into grab mode — so moving the mouse repositions the focus point and the image refocuses live. The wheel rides the aperture at the same time. Runs from anywhere (<kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>F</kbd>); the focus empty is hidden again when you finish.</p>
+<p>While the tool is active it switches the viewport to <b>Face snapping</b> (closest) automatically, so the focus point lands right on the surface under the cursor instead of floating in space. Your own snap settings are saved on entry and restored the moment the tool ends — so this never leaves snapping toggled on behind your back.</p>
+<table>
+<tr><th>Input</th><th>Action</th></tr>
+<tr><td>Mouse <span class="muted">(Move)</span></td><td>Reposition the ⦿ focus point — the camera refocuses to it live</td></tr>
+<tr><td>Wheel</td><td>f-stop / aperture, in 0.1 steps (clamped f/0.1 – f/32)</td></tr>
+<tr><td><kbd>LMB</kbd></td><td>Confirm</td></tr>
+<tr><td><kbd>RMB</kbd></td><td>Cancel</td></tr>
+</table>
+<p>A readout pill beside the marker shows the live <b>f-stop</b> and the focus distance from the camera, so you don't have to leave the viewport to read values; a hint banner lists the keys. Because a take's bound camera stores focus distance and f-stop (§5), the DOF you dial here is saved with the take and restored when you switch back.</p>
+
+<h3 id="ex-camera">14.2 Adjust Camera — Focal Length &amp; Dolly</h3>
+<p>Reframes the active camera by hand: slide the mouse left/right across the viewport to set the <b>focal length</b>, and roll the wheel to <b>dolly</b> the camera in and out along its own view axis. Together these are the classic dolly-zoom — change the lens for a wider or tighter perspective, then dolly to bring the subject back to the size you want.</p>
+<table>
+<tr><th>Input</th><th>Action</th></tr>
+<tr><td>Mouse&nbsp;X</td><td>Focal length 10–300&nbsp;mm in 5&nbsp;mm steps, mapped across the middle 80% of the viewport width</td></tr>
+<tr><td>Wheel <span class="muted">(<kbd>Ctrl</kbd> precise · <kbd>Shift</kbd> fine)</span></td><td>Dolly along the view axis — 1.0 / 0.5 / 0.1 unit steps (scaled by camera scale)</td></tr>
+<tr><td><kbd>LMB</kbd></td><td>Confirm</td></tr>
+<tr><td><kbd>RMB</kbd></td><td>Cancel — restores the original focal length and position</td></tr>
+</table>
+
+<h3 id="ex-resize">14.3 Interactive Resize — Drag the Frame</h3>
+<p>Changes the <b>render resolution</b> by dragging the camera frame's edges, the way you'd resize a canvas in Photoshop — what you see in the frame is what renders (WYSIWYG). Grab any of the four edges (within ~20&nbsp;px) and drag perpendicular to it; the cursor switches to a resize arrow and the resolution updates live. Drags accumulate, so you can nudge each side in turn. The camera's <i>Sensor Fit</i> is forced to <b>Horizontal</b> for the duration so the visible framing stays stable while only the canvas grows or shrinks.</p>
+<table>
+<tr><th>Input</th><th>Action</th></tr>
+<tr><td><kbd>LMB</kbd> drag edge</td><td>Resize that side of the canvas live</td></tr>
+<tr><td><kbd>Shift</kbd></td><td>Resize symmetrically from the centre (both opposite sides at once)</td></tr>
+<tr><td><kbd>Enter</kbd></td><td>Apply</td></tr>
+<tr><td><kbd>Esc</kbd> / <kbd>RMB</kbd></td><td>Cancel</td></tr>
+</table>
+<p>A readout by the cursor shows the new resolution and the delta from the start (green when growing, red when shrinking); a hint banner lists the keys. For exact numbers instead of dragging, the <span class="btn">⚙</span> button opens a numeric <b>Resize Canvas</b> dialog with a nine-point anchor grid (which edge/corner stays put).</p>
+
+<h3 id="ex-pip">14.4 Floating Viewport</h3>
+<p>Opens a small, borderless picture-in-picture 3D view parked over the camera frame's bottom-right corner, so you can nudge a light and watch its effect without looking away at the main editor. The button toggles it (or <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>P</kbd>): click once to open, again to close. Its width is a fraction of the camera-frame width (clamped 160–900&nbsp;px) and its height follows the frame's aspect, so it reads like an inset of the shot. A hint banner in the main viewport reminds you what it is and how to close it; it hides a few seconds after opening, and steps aside whenever a tool (Reflection Place, DOF, Interactive Resize, Edit Source) needs the same spot, so hints never stack.</p>
+<div class="tip"><b>Windows only for the borderless behaviour.</b> The seamless borderless window — stripped of its title bar and auto-parked in the corner — uses Win32 window control, so it's a Windows feature. On other platforms the PiP isn't available in this form.</div>
+
+<h3 id="ex-frametext">14.5 Frame Text</h3>
+<p>A typographic overlay locked to the camera frame — slate-style captions, watermarks and page furniture that scale with the composition and bake into the render. Size and margins track the frame, so what you see in the viewport matches the final image. Two independent layouts:</p>
+<ul>
+<li><b>Grid</b> — a 3×3 of cells. The corners and the top/bottom-centre read horizontally; the two side cells are rotated 90° (left reads bottom→up, right top→down); the centre cell works as a watermark. Each cell has its own text and font scale, and can hold multiple lines (<span class="btn">Add Line</span>, or type <code>\n</code>).</li>
+<li><b>Bands</b> — full-width header / footer bands, each with Left / Centre / Right slots and an optional edge-to-edge background bar. Stored separately from the Grid.</li>
+</ul>
+<p>Cell text may contain tokens that resolve live at draw time, so the caption follows the active take: <code>{page}</code>, <code>{total}</code>, <code>{take}</code>, <code>{camera}</code>, <code>{date}</code>. Click a cell to edit it (one field per line). <b>Frame Presets</b> save and recall a whole style (all cells, scales and band settings) so a look carries across files.</p>
+
+<h3 id="ex-ai">14.6 Depth Preview &amp; AI Reference Pack <span class="muted">(Beta)</span></h3>
+<p><b>Depth Preview</b> toggles a ControlNet-ready depth view of the current shot. On, it auto-fits the Mist range to everything renderable in front of the active camera, then swaps the scene onto a dedicated compositor tree that outputs an inverted 0–1 depth (near = white, far = black) — no need to understand Mist Start/Depth. Click again to leave; your own compositor setup is handed back untouched.</p>
+<p><b>Export AI Reference Pack</b> bakes the control images an AI relight pass needs. It opens a prompt editor (positive / negative, with starter templates), then in one render writes the channels you tick into an <code>AI_Reference</code> folder next to the .blend, plus a <code>take.json</code> holding your prompt and a control-image manifest with suggested ControlNet weights:</p>
+<table>
+<tr><th>Channel</th><th>What it is</th></tr>
+<tr><td><b>Depth</b> <span class="muted">(on)</span></td><td>Inverted 0–1 depth, near = white</td></tr>
+<tr><td><b>Albedo</b> <span class="muted">(on)</span></td><td>Unlit material colour (plain sRGB, not AgX)</td></tr>
+<tr><td><b>Beauty</b> <span class="muted">(on)</span></td><td>The rendered image</td></tr>
+<tr><td>Normal</td><td>Camera-space normal map</td></tr>
+<tr><td>AO</td><td>Ambient occlusion</td></tr>
+<tr><td>Edge (lineart)</td><td>Line-art edge map</td></tr>
+</table>
+<p>Tick <b>All takes (batch)</b> to export the pack for every light group in turn (switching take between renders), the way Batch Render does. Your compositor and output path are restored exactly afterwards. <i>Beta — the channel set and JSON format may still change.</i></p>
+
+<h2 id="prefs">15. Preferences &amp; Keymap</h2>
+<p>Edit → Preferences → Add-ons → Light Takes:</p>
+<ul>
+<li><b>Presets Directory</b> — where light presets are stored.</li>
+<li><b>Shortcuts</b> — every binding listed with an editable key box; toggle each individually or all at once. <i>Conflicts</i> scans your keymap and lists clashes.</li>
+</ul>
+<table>
+<tr><th>Default</th><th>Action</th></tr>
+<tr><td><kbd>V</kbd> / <kbd>Alt</kbd>+<kbd>V</kbd></td><td>Smart visibility / show all (§9)</td></tr>
+<tr><td><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+Click</td><td>Edit Source — instances &amp; GN (§10)</td></tr>
+<tr><td><kbd>Shift</kbd>+<kbd>Q</kbd></td><td>Quick Light panel at the cursor (§11.1)</td></tr>
+<tr><td><kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>R</kbd></td><td>Reflection Place (§11.2)</td></tr>
+<tr><td><kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>F</kbd></td><td>DOF focus + f-stop wheel (§14.1)</td></tr>
+<tr><td><kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>P</kbd></td><td>Toggle Floating Viewport (§14.4)</td></tr>
+<tr><td><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>RMB</kbd></td><td>Toggle instance orientation during Edit Source (§10)</td></tr>
+</table>
+
+<h2 id="trouble">16. Troubleshooting</h2>
+<table>
+<tr><th>Symptom</th><th>Explanation / Fix</th></tr>
+<tr><td>Console: <code>migrated N legacy node(s)</code> / <code>state data migrated to schema v2</code></td><td>Normal, once per pre-2.0 file. Save the file and it won't repeat.</td></tr>
+<tr><td>Nodes briefly show <i>“Initializing…”</i></td><td>Normal self-repair after undo or opening older files; resolves in a frame.</td></tr>
+<tr><td>Labels invisible in rendered viewport</td><td>Enable <i>Show labels in Render Preview</i> in Global Settings → Display.</td></tr>
+<tr><td>Changed lights “revert” when switching takes</td><td>That's the point — each take keeps its own values. Use Sync (§6) to push a change everywhere.</td></tr>
+<tr><td>A light is missing from the list in some takes</td><td>It's Solo and inactive there. Enable the G/S column to see and toggle it (§5).</td></tr>
+<tr><td>Energy slider does nothing</td><td>Check the Energy Factor in Global Settings → Light Control isn't 0; <i>Reset Light Energy</i> restores originals.</td></tr>
+<tr><td>Outliner suddenly shows the monitor column</td><td>Enabled automatically during Edit Source for clarity; restored on exit.</td></tr>
+<tr><td>Contact sheet missing</td><td>Needs ≥2 successful renders and the dialog toggle on; check the render output folder.</td></tr>
+<tr><td>Light Linking has no visible effect</td><td>Needs Cycles or EEVEE Next (4.2+). The choice is still saved per take; it just won't render on unsupported engines.</td></tr>
+</table>
+
+<h2 id="faq">17. FAQ</h2>
+<p><b>Do renders match the viewport?</b> Yes — full state re-apply per take + visibility sync.</p>
+<p><b>Different resolutions per take?</b> Yes; stored per take, contact sheet handles mixed sizes.</p>
+<p><b>Does the file work without the addon?</b> Scene data is plain Blender; only the helper nodes need the addon to evaluate. Addon-free export is on the roadmap.</p>
+<p><b>Where is my data stored?</b> Inside the .blend (scene properties) — nothing external, nothing online.</p>
+<p style="margin-top:40px" class="muted">Light Takes © 2026 Shawn · GPL-3.0-or-later · Support: x.nardo@gmail.com</p>
+</main>
+</body>
+</html>
